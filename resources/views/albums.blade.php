@@ -1,0 +1,42 @@
+@extends('template.layout')
+
+@section('content')
+    {{csrf_field()}}
+
+<table class="table">
+    <tr>
+        <th>ALBUM NAME</th>
+        <th>DESCRIPTION</th>
+        <th>THUMBS</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+
+        @foreach($albums as $album)
+        <tr>
+            <td><b>{{$album->album_name}}</b></td>
+            <td>{{$album->description}}</td>
+            <td><img src="{{asset($album->album_thumb)}}" width="100"></td>
+            <td>
+                <a href="/albums/{{$album->id}}/delete">
+                    <button type="button" class="btn btn-danger btn-primary btn-sm">delete</button>
+                </a>
+            </td>
+            <td>
+                <a href="/albums/{{$album->id}}/edit">
+                    <button type="button" class="btn btn-primary btn-sm">update</button>
+                </a>
+            </td>
+            <td>
+                <a href="#">
+                    <button type="button" class="btn btn-info btn-primary btn-sm">show</button>
+                </a>
+            </td>
+        </tr>
+        @endforeach
+
+</table>
+
+
+    @endsection
