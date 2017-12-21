@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Album;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AlbumController extends Controller
 {
@@ -11,13 +12,28 @@ class AlbumController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(){
-        $albums = Album::orderBy('id','DESC')->paginate(10);
+        $albums = Album::orderBy('id','DESC')->paginate(8);
         //dd($albums);
         return view('albums',['albums'=>$albums]);
     }
 
+    /*
+     public function delete($id){
+        $albums = Album::find($id);
+        $albums->delete();
+        return redirect('albums');
+    }
+     */
+
     public function delete($id){
         $albums = Album::find($id);
+        $thumb = $albums->album_thumb;
+        $data = substr($thumb, 0, 4);
+        // se è caricata un'immagine nel db cancellala //
+        if($data !== 'http'){
+            Storage::disk('public')->delete('/'.$thumb);
+        }
+
         $albums->delete();
         return redirect('albums');
     }
@@ -52,10 +68,20 @@ class AlbumController extends Controller
         $albums = new Album();
         $albums->album_name = $request->input('album_name');
         $albums->description = $request->input('description');
-        $albums->album_thumb= 'https://lorempixel.com/240/240/cats/?26598';
-        $albums->user_id = Auth::user()->id;
-        $albums->save();
-        //dd($albums);
-        return redirect('/albums');
+        $albums->album_thumb = env('ALBUM_THUMB_DIR').'/'.'no_image.png';
+        $albums->user_id= Auth::user()->id;
+        $res=$albums->save();
+
+        if ($request->hasFile('album_thumb')){
+            $file= $request->file('album_thumb');
+            $fileName= $albums->id.'.'.$file->extension();
+            $file->storeAs(env('ALBUM_THUMB_DIR'),$fileName,'public');
+            $albums->album_thumb= env('ALBUM_THUMB_DIR').'/'.$fileName;
+            $albums->save();
+            return redirect('albums');
+        } else{
+            $albums->save();
+            return redirect('albums');
+        }
     }
 }

@@ -26,3 +26,4 @@ Route::post('/albums/save','AlbumController@save');
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+
