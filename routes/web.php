@@ -22,3 +22,7 @@ Route::get('/albums/{id}/edit','AlbumController@edit');
 Route::patch('/albums/{id}/update','AlbumController@update');
 Route::get('/albums/create','AlbumController@create');
 Route::post('/albums/save','AlbumController@save');
+
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');

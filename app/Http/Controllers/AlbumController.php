@@ -11,7 +11,7 @@ class AlbumController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(){
-        $albums = Album::orderBy('id','DESC')->get();
+        $albums = Album::orderBy('id','DESC')->paginate(10);
         //dd($albums);
         return view('albums',['albums'=>$albums]);
     }
@@ -29,10 +29,17 @@ class AlbumController extends Controller
 
     public function update($id,Request $request){
         $albums = Album::find($id);
-        $albums->album_name = $request->get('album_name');
-        $albums->description = $request->get('description');
+        $albums->album_name = $request->input('album_name');
+        $albums->description = $request->input('description');
+
+        if ($request->hasFile('album_thumb')){
+            $file = $request->file('album_thumb');
+            $fileName= $id.'.'.$file->extension();
+            $file->storeAs(env('ALBUM_THUMB_DIR'),$fileName,'public');
+            $albums->album_thumb= env('ALBUM_THUMB_DIR').'/'.$fileName;
+        }
         $albums->update();
-        // dd($albums);
+
         return redirect('albums');
     }
 
@@ -46,9 +53,9 @@ class AlbumController extends Controller
         $albums->album_name = $request->input('album_name');
         $albums->description = $request->input('description');
         $albums->album_thumb= 'https://lorempixel.com/240/240/cats/?26598';
-        $albums->user_id = 1;
+        $albums->user_id = Auth::user()->id;
         $albums->save();
         //dd($albums);
-        return redirect('/albums');;
+        return redirect('/albums');
     }
 }
