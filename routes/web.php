@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/* Albums */
 Route::get('/albums','AlbumController@index');
 Route::get('/albums/{id}/delete','AlbumController@delete');
 Route::get('/albums/{id}/edit','AlbumController@edit');
@@ -26,4 +27,11 @@ Route::post('/albums/save','AlbumController@save');
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+
+/* Photos */
+
+Route::get('/albums/{id}/photos','PhotoController@show')->name('photos');
+Route::get('/photos/{id}/delete','PhotoController@delete');
+Route::get('/photos/{id}/edit','PhotoController@edit');
+Route::patch('/photos/{id}/update','PhotoController@update');
 

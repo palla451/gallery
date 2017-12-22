@@ -52,7 +52,7 @@ class AlbumController extends Controller
             $file = $request->file('album_thumb');
             $fileName= $id.'.'.$file->extension();
             $file->storeAs(env('ALBUM_THUMB_DIR'),$fileName,'public');
-            $albums->album_thumb= env('ALBUM_THUMB_DIR').'/'.$fileName;
+            $albums->album_thumb= 'storage/'.env('ALBUM_THUMB_DIR').'/'.$fileName;
         }
         $albums->update();
 
@@ -69,7 +69,7 @@ class AlbumController extends Controller
         $albums->album_name = $request->input('album_name');
         $albums->description = $request->input('description');
         $albums->album_thumb = env('ALBUM_THUMB_DIR').'/'.'no_image.png';
-        $albums->user_id= Auth::user()->id;
+        $albums->user_id = Auth::user()->id;
         $res=$albums->save();
 
         if ($request->hasFile('album_thumb')){

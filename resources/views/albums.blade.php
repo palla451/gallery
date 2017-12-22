@@ -29,7 +29,7 @@
                 </a>
             </td>
             <td>
-                <a href="#">
+                <a href="/albums/{{$album->id}}/photos">
                     <button type="button" class="btn btn-info btn-primary btn-sm">show</button>
                 </a>
             </td>
