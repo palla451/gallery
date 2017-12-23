@@ -38,6 +38,27 @@ class PhotoController extends Controller
 
     public function update($id,Request $request){
         $photos = Photo::find($id);
+
+        $this->processFile($photos, $request);
+        $photos->name = $request->input('name');
+        $photos->description = $request->input('description');
+
+        $photos->update();
+        return redirect('/albums/'.$photos->album_id.'/photos');
+    }
+
+    public function processFile($photos,Request $request){
+        if($request->hasFile('img_path')){
+            $file= $request->file('img_path');
+            $fileName= $fileName = $photos->id.'.'.$file->extension();
+            $file->storeAs(env('IMG_DIR').'/'.$photos->album_id,$fileName,'public');
+            $photos->img_path = '/storage/'.env('IMG_DIR').'/'.$photos->album_id.'/'.$fileName;
+        }
+    }
+
+    /*
+    public function update($id,Request $request){
+        $photos = Photo::find($id);
         $key = $photos->album_id;
         $photos->name = $request->input('name');
         $photos->description = $request->input('description');
@@ -51,6 +72,8 @@ class PhotoController extends Controller
         $photos->update();
         return redirect('/albums/'.$key.'/photos');
     }
+     */
+
 }
 
 

@@ -5,7 +5,7 @@
 
     <table class="table">
         <h1>Album name: {{$albums->album_name}}</h1>
-        <h2>Author: {{$users->name}}</h2>
+        <h4>Author: {{$users->name}}</h4>
         <tr>
             <th>NAME IMAGE</th>
             <th>DESCRIPTION</th>
