@@ -20,17 +20,17 @@
             <td><img src="{{asset($album->path)}}" width="100"></td>
             <td>
                 <a href="/albums/{{$album->id}}/delete">
-                    <button type="button" class="btn btn-danger btn-primary btn-sm">delete</button>
+                    <button type="button" class="btn btn-danger btn-primary btn-md">delete</button>
                 </a>
             </td>
             <td>
                 <a href="/albums/{{$album->id}}/edit">
-                    <button type="button" class="btn btn-primary btn-sm">update</button>
+                    <button type="button" class="btn btn-primary btn-md">update</button>
                 </a>
             </td>
             <td>
                 <a href="/albums/{{$album->id}}/photos">
-                    <button type="button" class="btn btn-info btn-primary btn-sm">show</button>
+                    <button type="button" class="btn btn-info btn-primary btn-md">show</button>
                 </a>
             </td>
         </tr>

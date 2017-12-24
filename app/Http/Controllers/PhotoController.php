@@ -6,6 +6,8 @@ use App\User;
 use App\Photo;
 use App\Album;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 class PhotoController extends Controller
@@ -27,6 +29,11 @@ class PhotoController extends Controller
     public function delete($id){
         $photos = Photo::find($id);
         $key = $photos->album_id;
+        $img = $photos->img_path;
+        $data = substr($img, 0, 4);
+        if($data !== 'http'){
+            Storage::disk('public')->delete($img);
+        }
         $photos->delete();
         return redirect('/albums/'.$key.'/photos');
     }
@@ -47,6 +54,60 @@ class PhotoController extends Controller
         return redirect('/albums/'.$photos->album_id.'/photos');
     }
 
+    /*
+public function update($id,Request $request){
+    $photos = Photo::find($id);
+    $key = $photos->album_id;
+    $photos->name = $request->input('name');
+    $photos->description = $request->input('description');
+
+    if ($request->hasFile('img_path')){
+        $file= $request->file('img_path');
+        $fileName = $id.'.'.$file->extension();
+        $file->storeAs(env('IMG_DIR').'/'.$key,$fileName,'public');
+        $photos->img_path = '/storage/'.env('IMG_DIR').'/'.$key.'/'.$fileName;
+    }
+    $photos->update();
+    return redirect('/albums/'.$key.'/photos');
+}
+ */
+
+    public function create($id){
+        $photos = new Photo();
+        $albums = Album::find($id);
+        return view('photos_create',
+            [
+                'photos'=>$photos,
+                'albums'=>$albums,
+            ]);
+    }
+
+    public function save(Request $request){
+        $photos = new Photo();
+        $photos->name = $request->input('name');
+        $photos->description = $request->input('description');
+        $photos->img_path = env('ALBUM_THUMB_DIR').'/'.'no_image.png';
+        $photos->album_id = $request->input('album_id');
+       // dd($photos->album_id);
+        $res = $photos->save();
+
+        //dd($res);
+
+        if ($request->hasFile('img_path')){
+            $file= $request->file('img_path');
+            $fileName= $photos->id.'.'.$file->extension();
+            $file->storeAs(env('IMG_DIR').'/'.$photos->album_id,$fileName,'public');
+            $photos->img_path= '/storage/'.env('IMG_DIR').'/'.$photos->album_id.'/'.$fileName;
+            $photos->save();
+            return redirect('/albums/'.$photos->album_id.'/photos');
+        } else{
+            $photos->save();
+            return redirect('/albums/'.$photos->album_id.'/photos');
+        }
+    }
+
+
+
     public function processFile($photos,Request $request){
         if($request->hasFile('img_path')){
             $file= $request->file('img_path');
@@ -55,25 +116,6 @@ class PhotoController extends Controller
             $photos->img_path = '/storage/'.env('IMG_DIR').'/'.$photos->album_id.'/'.$fileName;
         }
     }
-
-    /*
-    public function update($id,Request $request){
-        $photos = Photo::find($id);
-        $key = $photos->album_id;
-        $photos->name = $request->input('name');
-        $photos->description = $request->input('description');
-
-        if ($request->hasFile('img_path')){
-            $file= $request->file('img_path');
-            $fileName = $id.'.'.$file->extension();
-            $file->storeAs(env('IMG_DIR').'/'.$key,$fileName,'public');
-            $photos->img_path = '/storage/'.env('IMG_DIR').'/'.$key.'/'.$fileName;
-        }
-        $photos->update();
-        return redirect('/albums/'.$key.'/photos');
-    }
-     */
-
 }
 
 
