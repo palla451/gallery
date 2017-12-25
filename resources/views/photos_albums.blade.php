@@ -26,7 +26,7 @@
             <tr>
                 <td><b>{{$photo->name}}</b></td>
                 <td>{{$photo->description}}</td>
-                <td><img src="{{asset($photo->img_path)}}" width="480"></td>
+                <td><img src="{{asset($photo->path)}}" width="480"></td>
                 <td>
                     <a href="/photos/{{$photo->id}}/delete">
                         <button type="button" class="btn btn-danger btn-primary btn-md">delete</button>

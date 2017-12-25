@@ -2,38 +2,26 @@
 
 namespace App\Http\Controllers;
 use App\Album;
+use App\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class AlbumController extends Controller
 {
-    /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
+
     public function index(){
         $albums = Album::orderBy('id','DESC')->paginate(8);
-        //dd($albums);
         return view('albums',['albums'=>$albums]);
     }
 
-    /*
-     public function delete($id){
-        $albums = Album::find($id);
-        $albums->delete();
-        return redirect('albums');
-    }
-     */
-
     public function delete($id){
         $albums = Album::find($id);
-        $thumb = $albums->album_thumb;
-        $data = substr($thumb, 0, 4);
+        $data = substr($albums->album_thumb, 0, 4);
+        $this->deleteDirectory($albums->id);
         // se è caricata un'immagine nel db cancellala //
-        if($data !== 'http'){
-            Storage::disk('public')->delete('/'.$thumb);
-        }
-
+        if($data !== 'http')
+            Storage::disk('public')->delete('/'.$albums->album_thumb);
         $albums->delete();
         return redirect('albums');
     }
@@ -47,15 +35,8 @@ class AlbumController extends Controller
         $albums = Album::find($id);
         $albums->album_name = $request->input('album_name');
         $albums->description = $request->input('description');
-
-        if ($request->hasFile('album_thumb')){
-            $file = $request->file('album_thumb');
-            $fileName= $id.'.'.$file->extension();
-            $file->storeAs(env('ALBUM_THUMB_DIR'),$fileName,'public');
-            $albums->album_thumb= env('ALBUM_THUMB_DIR').'/'.$fileName;
-        }
+        $this->processFile($albums,$request);
         $albums->update();
-
         return redirect('albums');
     }
 
@@ -71,17 +52,26 @@ class AlbumController extends Controller
         $albums->album_thumb = env('ALBUM_THUMB_DIR').'/'.'no_image.png';
         $albums->user_id = Auth::user()->id;
         $res=$albums->save();
+        $this->processFile($albums, $request);
+        $albums->save();
+        return redirect('albums');
+    }
 
-        if ($request->hasFile('album_thumb')){
+    public function processFile($albums,Request $request){
+        if($request->hasFile('album_thumb')){
             $file= $request->file('album_thumb');
             $fileName= $albums->id.'.'.$file->extension();
             $file->storeAs(env('ALBUM_THUMB_DIR'),$fileName,'public');
             $albums->album_thumb= env('ALBUM_THUMB_DIR').'/'.$fileName;
-            $albums->save();
-            return redirect('albums');
-        } else{
-            $albums->save();
-            return redirect('albums');
+        }
+    }
+
+    public function deleteDirectory($id){
+        $photos = Photo::where('album_id','=',$id)->get();
+        foreach($photos as $photo){
+            $path = substr($photo['img_path'], 0, 4);
+            if ($path !== 'http')
+                Storage::disk('public')->deleteDirectory(env('IMG_DIR').'/'.$id);
         }
     }
 }

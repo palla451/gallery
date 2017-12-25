@@ -25,7 +25,7 @@
         </div>
 
         <div class="form-group">
-            <p><img src="{{$photos->img_path}}" width="240px"></p>
+            <p><img src="{{asset($photos->path)}}" width="240px"></p>
         </div>
 
         <button type="submit" class="btn btn-lg btn-primary">Submit</button>

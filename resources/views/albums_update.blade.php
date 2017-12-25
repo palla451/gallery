@@ -25,7 +25,7 @@
         </div>
 
         <div class="form-group">
-            <p><img src="{{$albums->album_thumb}}" width="240px"></p>
+            <p><img src="{{asset($albums->path)}}" width="240px"></p>
         </div>
 
         <button type="submit" class="btn btn-lg btn-primary">Submit</button>
