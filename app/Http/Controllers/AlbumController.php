@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Album;
 use App\Photo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 

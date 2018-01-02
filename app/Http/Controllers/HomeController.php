@@ -25,10 +25,9 @@ class HomeController extends Controller
 
     public function index()
     {
-        $query = Album::orderBy('id','DESC')->paginate(8);
-
-        $albums = $query->where('user_id',Auth::user()->id);
-
+        $albums = Album::orderBy('id','DESC')
+            ->where('user_id','=',Auth::user()->id)->paginate(8);
+        
         return view('/albums',['albums'=>$albums]);
     }
 }
