@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Album;
 use App\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,9 +24,11 @@ class AlbumController extends Controller
 
     public function index(){
 
-        $query = Album::orderBy('id','DESC')->paginate(8);
-       // $albums->where('user_id',Auth::user()->id);
-        $albums = $query->where('user_id',Auth::user()->id);
+        // $albums = Album::orderBy('id','DESC')->paginate(8);
+
+        $albums = Album::orderBy('id','DESC')
+                         ->where('user_id','=',Auth::user()->id)->paginate(8);
+
         return view('albums',[
             'albums'=>$albums
         ]);
@@ -33,7 +36,6 @@ class AlbumController extends Controller
 
     public function delete($id){
         $albums = Album::find($id);
-
         $data = substr($albums->album_thumb, 0, 4);
         $this->deleteDirectory($albums->id);
         if($data !== 'http')

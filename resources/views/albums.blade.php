@@ -35,15 +35,11 @@
                 </a>
             </td>
         </tr>
-
         @endforeach
 
 
 </table>
 
+    {{$albums->links()}}
 
-
-
-
-
-    @endsection
+@endsection
