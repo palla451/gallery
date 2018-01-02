@@ -14,6 +14,7 @@
     </tr>
 
         @foreach($albums as $album)
+
         <tr>
             <td><b>{{$album->album_name}}</b></td>
             <td>{{$album->description}}</td>
@@ -34,11 +35,14 @@
                 </a>
             </td>
         </tr>
+
         @endforeach
+
 
 </table>
 
-    {{$albums->links()}}
+
+
 
 
 

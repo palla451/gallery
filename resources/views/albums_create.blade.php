@@ -2,17 +2,20 @@
 
 @section('content')
 
+@include('partials.errors')
+
+
 
     <form action="/albums/save" method="POST" enctype="multipart/form-data">
         {{csrf_field()}}
         <div class="form-group">
             <label class="col-form-label">Album Name</label>
-            <input name="album_name" type="text" class="form-control" id="album_name" placeholder="Album Name">
+            <input name="album_name" type="text" class="form-control" id="album_name" placeholder="Album Name" value="{{old('album_name')}}">
         </div>
 
         <div class="form-group">
             <label class="col-form-label">Description</label>
-            <textarea type="text-area" name="description" class="form-control" id="description" placeholder="description"></textarea>
+            <textarea type="text-area" name="description" class="form-control" id="description" placeholder="description">{{old('description')}}</textarea>
         </div>
 
         <div class="form-group">

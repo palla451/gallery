@@ -9,17 +9,33 @@ use Illuminate\Support\Facades\Storage;
 
 class AlbumController extends Controller
 {
+    /* regole validazione */
+
+    protected $rules =[
+        'album_name'  => 'required',
+        'description' => 'required'
+    ];
+
+    protected $errorMessages =[
+        'album_name.required'  => 'Nome album è obbligatorio',
+        'description.required' => 'La descrizione è obbligatorio'
+    ];
 
     public function index(){
-        $albums = Album::orderBy('id','DESC')->paginate(8);
-        return view('albums',['albums'=>$albums]);
+
+        $query = Album::orderBy('id','DESC')->paginate(8);
+       // $albums->where('user_id',Auth::user()->id);
+        $albums = $query->where('user_id',Auth::user()->id);
+        return view('albums',[
+            'albums'=>$albums
+        ]);
     }
 
     public function delete($id){
         $albums = Album::find($id);
+
         $data = substr($albums->album_thumb, 0, 4);
         $this->deleteDirectory($albums->id);
-        // se è caricata un'immagine nel db cancellala //
         if($data !== 'http')
             Storage::disk('public')->delete('/'.$albums->album_thumb);
         $albums->delete();
@@ -33,6 +49,9 @@ class AlbumController extends Controller
 
     public function update($id,Request $request){
         $albums = Album::find($id);
+
+        $this->validate($request, $this->rules, $this->errorMessages);
+
         $albums->album_name = $request->input('album_name');
         $albums->description = $request->input('description');
         $this->processFile($albums,$request);
@@ -46,6 +65,9 @@ class AlbumController extends Controller
     }
 
     public function save(Request $request){
+
+        $this->validate($request, $this->rules, $this->errorMessages);
+
         $albums = new Album();
         $albums->album_name = $request->input('album_name');
         $albums->description = $request->input('description');

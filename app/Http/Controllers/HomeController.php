@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Album;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -24,7 +25,10 @@ class HomeController extends Controller
 
     public function index()
     {
-        $albums = Album::orderBy('id','DESC')->paginate(10);
+        $query = Album::orderBy('id','DESC')->paginate(8);
+
+        $albums = $query->where('user_id',Auth::user()->id);
+
         return view('/albums',['albums'=>$albums]);
     }
 }
