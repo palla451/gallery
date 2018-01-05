@@ -19,10 +19,9 @@
 
 Route::group(
     ['middleware' => 'auth'],
-    function(){
+        function(){
 
         /* Albums */
-        //Route::get('/','AlbumController@index');
         Route::get('/albums','AlbumController@index');
         Route::get('/albums/{id}/delete','AlbumController@delete');
         Route::get('/albums/{id}/edit','AlbumController@edit');
